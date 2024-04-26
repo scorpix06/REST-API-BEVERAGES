@@ -31,7 +31,8 @@ The steps to authenticate is :
 
 ### Documentation 
 
-There is no documentation yet for this project but all the requests of the API are available in a postman collection wich can be imported with the "beverages_REST_API.postman_collection.json" file.
+There is no documentation yet for this project but all the requests of the API are available in a postman collection wich can be imported with the "beverages_REST_API.postman_collection.json" or via the link below : 
+https://elements.getpostman.com/redirect?entityId=19509321-8c6a179a-7242-41c4-833a-c5269366dd72&entityType=collection
 
 
 ### Some examples of curl requests
