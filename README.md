@@ -32,3 +32,81 @@ The steps to authenticate is :
 ### Documentation 
 
 There is no documentation yet for this project but all the requests of the API are available in a postman collection wich can be imported with the "beverages_REST_API.postman_collection.json" file.
+
+#### Signin :
+
+```
+  curl --location 'http://127.0.0.1:5000/signup' \
+  --form 'name="user"' \
+  --form 'password="test"'
+```
+#### Login :
+
+``` 
+curl --location 'http://127.0.0.1:5000/login' \
+--form 'name="user"' \
+--form 'password="test"'
+
+```
+
+#### Create new beverages :
+
+``` 
+curl --location 'http://127.0.0.1:5000/beverages' \
+--header 'Content-Type: application/json' \
+--header 'Accept: application/json' \
+--header 'token: <your_token_here>' \
+--data '{
+    "nom": "1664",
+    "type": "biere",
+    "description": "biere blonde 1664 ",
+    "alcool": "5",
+    "contenance": "33",
+    "contenance_restante": "33",
+    "pays": "france",
+    "nez": "doux",
+    "bouche": "douces",
+    "finale": "ma foie, tu le sais toi ?"
+}
+'
+```
+
+#### Read all beverages:
+``` 
+curl --location 'http://127.0.0.1:5000/beverages' \
+--header 'token: <your_token_here>'
+```
+
+#### Read with filter (available filter : nom, pays, id, alcool, contenance, contenance_restante, nez, bouche, finale): 
+``` 
+curl --location 'http://127.0.0.1:5000/beverages?pays=france' \
+--header 'token:  <your_token_here>'
+```
+#### Update a beverage
+``` 
+curl --location --request PUT 'http://127.0.0.1:5000/beverages/<id>' \
+--header 'Content-Type: application/json' \
+--header 'Accept: application/json' \
+--header 'token: <your_token_here>' \
+--data '{
+    "nom": "1664",
+    "type": "biere",
+    "description": "biere blonde 1664 ",
+    "alcool": "6",
+    "contenance": "25",
+    "contenance_restante": "25",
+    "pays": "france",
+    "nez": "Doux",
+    "bouche": "Douces",
+    "finale": "ma foie, tu le sais toi ?"
+}
+'
+```
+
+#### Delete a beverage
+``` 
+curl --location --request DELETE 'http://127.0.0.1:5000/beverages/<id>' \
+--header 'token: <your_token_here>'
+```
+
+More requests available in the postman file :)
