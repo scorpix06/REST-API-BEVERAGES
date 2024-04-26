@@ -209,7 +209,6 @@ def get_beverages(username):
         if arg in argument_valable:
             cursor.execute(f"SELECT * FROM {db_name} WHERE {arg}='{arg_value}'")
             beverages = cursor.fetchall()
-            print(beverages)
 
             if not beverages or beverages is None:
                 return jsonify({'message': 'Beverage not found'}), 404
