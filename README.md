@@ -14,8 +14,8 @@ This repository is school project on REST API. It use Python Flask to create a R
 
 ```bash
   sudo apt install python3-pip git -yq
-  git clone https://github.com/scorpix06/fortigate-python-apikey-generator.git
-  cd ./fortigate-python-apikey-generator
+  git clone https://github.com/scorpix06/REST-API-BEVERAGES.git
+  cd ./REST-API-BEVERAGES
   python3 -m pip install -r requirements.txt
 ```
 
