@@ -1,0 +1,400 @@
+{
+	"info": {
+		"_postman_id": "8c6a179a-7242-41c4-833a-c5269366dd72",
+		"name": "Beverages REST API",
+		"description": "Cette collection est concu pour pouvoir tester l'API \"beverages\", dans le cadre du TP API REST la M1 SRC ESGI LYN promotion 2023-2025",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "19509321"
+	},
+	"item": [
+		{
+			"name": "Authentification",
+			"item": [
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "alban",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "test",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/login",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Signup",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "alban",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "test",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/signup",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/users",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "eleve",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "test",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/users",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/users",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/users",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "/beverages",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"content-type": true
+				}
+			},
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwdWJsaWNfaWQiOiI2OWJiNDVjNi1lMzVlLTRlYmYtOTEyNi1jZmIyZmZjODY0NTYiLCJleHAiOjE3MTQxNjk4MDcsImFsZ29yaXRobXMiOlsiSFMyNTYiXX0.5hkaAuDdbtpECKqsH4cZBt6ycAbBVnIylin1GZtQARY",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"nom\": \"Vin\",\n    \"type\": \"Vin\",\n    \"description\": \"biere blonde Heineken \",\n    \"alcool\": \"5\",\n    \"contenance\": \"33\",\n    \"contenance_restante\": \"33\",\n    \"pays\": \"france\",\n    \"nez\": \"Doux\",\n    \"bouche\": \"Douces\",\n    \"finale\": \"ma foie, tu le sais toi ?\"\n}\n"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/beverages",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"beverages"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/beverages",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwdWJsaWNfaWQiOiI2OWJiNDVjNi1lMzVlLTRlYmYtOTEyNi1jZmIyZmZjODY0NTYiLCJleHAiOjE3MTQxNjk4MDcsImFsZ29yaXRobXMiOlsiSFMyNTYiXX0.5hkaAuDdbtpECKqsH4cZBt6ycAbBVnIylin1GZtQARY",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://127.0.0.1:5000/beverages",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"beverages"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/beverages?arg=arg_value",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwdWJsaWNfaWQiOiI2OWJiNDVjNi1lMzVlLTRlYmYtOTEyNi1jZmIyZmZjODY0NTYiLCJleHAiOjE3MTQxNjk4MDcsImFsZ29yaXRobXMiOlsiSFMyNTYiXX0.5hkaAuDdbtpECKqsH4cZBt6ycAbBVnIylin1GZtQARY",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://127.0.0.1:5000/beverages?id=2",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"beverages"
+					],
+					"query": [
+						{
+							"key": "nom",
+							"value": "1664",
+							"disabled": true
+						},
+						{
+							"key": "pays",
+							"value": "france",
+							"disabled": true
+						},
+						{
+							"key": "id",
+							"value": "2"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/beverages/id",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"content-type": true
+				}
+			},
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwdWJsaWNfaWQiOiI2OWJiNDVjNi1lMzVlLTRlYmYtOTEyNi1jZmIyZmZjODY0NTYiLCJleHAiOjE3MTQxNjk4MDcsImFsZ29yaXRobXMiOlsiSFMyNTYiXX0.5hkaAuDdbtpECKqsH4cZBt6ycAbBVnIylin1GZtQARY",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"nom\": \"1664\",\n    \"type\": \"biere\",\n    \"description\": \"biere blonde 1664 \",\n    \"alcool\": \"5\",\n    \"contenance\": \"25\",\n    \"contenance_restante\": \"25\",\n    \"pays\": \"france\",\n    \"nez\": \"Doux\",\n    \"bouche\": \"Douces\",\n    \"finale\": \"ma foie, tu le sais toi ?\"\n}\n"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/beverages/1",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"beverages",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/beverages/id",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwdWJsaWNfaWQiOiI2OWJiNDVjNi1lMzVlLTRlYmYtOTEyNi1jZmIyZmZjODY0NTYiLCJleHAiOjE3MTQxNjk4MDcsImFsZ29yaXRobXMiOlsiSFMyNTYiXX0.5hkaAuDdbtpECKqsH4cZBt6ycAbBVnIylin1GZtQARY",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://127.0.0.1:5000/beverages/1",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"beverages",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/beverages/all",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwdWJsaWNfaWQiOiI4N2MyOGUzYi1iM2I5LTQ4YzAtODViNC0yNmVkODg2NzlmMTMiLCJleHAiOjE3MTQxNTcyNTAsImFsZ29yaXRobXMiOlsiSFMyNTYiXX0.-TxoF83Wk7Xwf6iD7o84G2pPShERxR2kqfWfDhZiP0s",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://127.0.0.1:5000/beverages/2",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"beverages",
+						"2"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "token",
+			"value": "",
+			"type": "string"
+		}
+	]
+}

@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS {db_name} (
     nom TEXT NOT NULL,
     type TEXT NOT NULL,
     description INTEGER NOT NULL,
-    alcool REAL NOT NULL,f
+    alcool REAL NOT NULL,
     contenance REAL NOT NULL,
     contenance_restante REAL NOT NULL,
     pays TEXT NOT NULL,
