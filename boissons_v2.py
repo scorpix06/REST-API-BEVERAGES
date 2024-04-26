@@ -2,7 +2,7 @@
 
 from flask import Flask, request, jsonify, make_response
 import sqlite3
-import uuid # for public id
+import uuid 
 from  werkzeug.security import generate_password_hash, check_password_hash
 import jwt
 from datetime import datetime, timedelta
@@ -32,8 +32,22 @@ CREATE TABLE IF NOT EXISTS {db_name} (
 """)               
 conn.commit()
 
+# Initialisation de la base de donnée des utilisateurs
+accounts_db_name = "accounts"
+accounts_db_file = "accounts.db"
+accounts_conn = sqlite3.connect(accounts_db_file, check_same_thread=False)
+accounts_cursor = accounts_conn.cursor()
 
-accounts = []
+accounts_cursor.execute(f"""
+CREATE TABLE IF NOT EXISTS {accounts_db_name} (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    public_id TEXT NOT NULL,
+    name TEXT NOT NULL,
+    hashed_password TEXT NOT NULL
+)
+""")               
+accounts_conn.commit()
+
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'masuperclesupersecreteestsurgithub,pasbien'
@@ -55,50 +69,49 @@ def auth_required(f):
         try:
             data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"])
         except:
-            return jsonify({'message' : 'Invalid token'}), 401
-        
-        # Grace a l'uuid (obtenu en decodant le token), verifie que l'uuid appartient bien a un user de notre API
-        user = None
-        for account in accounts:
-            if account.get("id") == data['public_id']:
-                user = account
-                user_founded = True
-                username = user.get("name")
+            return jsonify({'message' : 'Invalid token (impossible to decode token)'}), 401
 
-        if not user:
-            return jsonify({'message' : 'User not found'}), 401
-        else:
-            return  f(username, *args, **kwargs)
+        # Grace a l'uuid (obtenu en decodant le token), verifie que l'uuid appartient bien a un user de notre API
+        accounts_cursor.execute(f"SELECT * FROM {accounts_db_name} WHERE public_id='{data['public_id']}'")
+        matching_user = accounts_cursor.fetchall()
+
+        if len(matching_user) == 0:
+            return jsonify({'message' : 'Invalid token'}), 401
+            
+        user = matching_user[0] # Au format tuple (id, id_public, name, hashed_password)
+        return  f(user[2], *args, **kwargs)
 
     return decorated
 
   
 @app.route('/login', methods =['POST'])
 def login():
+    
+    # Verification que le name et le password ont été fournis dans la requete
     auth = request.form
     if not auth or not auth.get('name') or not auth.get('password'):
         return make_response('Could not verify', 401, {'WWW-Authenticate' : 'Basic realm ="Login required !!"'})
 
-    user_founded = False
+    # Recuperation du compte avec le name renseigné dans la base de donnée
+    name = auth.get('name')
+    accounts_cursor.execute(f"SELECT * FROM {accounts_db_name} WHERE name='{name}'")
+    matching_user = accounts_cursor.fetchall()
 
-    for account in accounts:
-        if account.get("name") == auth.get('name'):
-            user = account
-            user_founded = True
-    
-    if user_founded == False:
-        return make_response('Could not verify', 401, {'WWW-Authenticate' : 'Basic realm ="User does not exist !!"'})
+    # Si pas d'utilisateur trouvé dans la base de donnée
+    if len(matching_user) == 0:
+        return make_response('User does not exist', 401, {'WWW-Authenticate' : 'Basic realm ="User does not exist !!"'})
 
+    user = matching_user[0] # Au format tuple (id, id_public, name, hashed_password)
 
-    if check_password_hash(user.get("hashed_password"), auth.get('password')):
+    # Comparaison des hash de mot de passe
+    if check_password_hash(user[3], auth.get('password')):
         # generates the JWT Token
         token = jwt.encode({
-            'public_id': user.get("id"),
+            'public_id': user[1],
             'exp' : datetime.utcnow() + timedelta(minutes = 30),
             'algorithms': ["HS256"]
         }, app.config['SECRET_KEY'])
-        print(token)
-        print(type(token))
+
         return make_response(jsonify({'token' : token}), 201)
 
     return make_response('Could not verify', 403, {'WWW-Authenticate' : 'Basic realm ="Wrong Password !!"'})
@@ -108,18 +121,72 @@ def signup():
 
     name = request.form.get('name')
     password = request.form.get('password')
+
+    accounts_cursor.execute(f"SELECT * FROM {accounts_db_name} WHERE name='{name}'")
+    matching_user = accounts_cursor.fetchall()
+    print(name)
+    print(matching_user)
+    print(len(matching_user))
+    if len(matching_user) >= 1:
+        return jsonify({'message' : 'User already exist'}), 401
+    
     hashed_password = generate_password_hash(password)
     id = str(uuid.uuid4())
 
     user = {
         "name": name,
         "hashed_password": hashed_password,
-        "id": id
+        "public_id": id
     }
-    print(user)
-    accounts.append(user)
+
+    # Creation de l'utilisateur dans la base de donnée
+    accounts_cursor.execute(f"""
+    INSERT INTO {accounts_db_name} (public_id, hashed_password, name) VALUES (?, ?, ?) 
+    """, (user['public_id'], 
+          user['hashed_password'],
+          user['name'],    
+          ))
+    accounts_conn.commit()
+
   
     return make_response('Successfully registered.', 201)
+
+@app.route('/users', methods =['DELETE'])
+def del_user():
+    
+    # Verification que le name et le password ont été fournis dans la requete
+    auth = request.form
+    if not auth or not auth.get('name') or not auth.get('password'):
+        return make_response('Could not verify', 401, {'WWW-Authenticate' : 'Basic realm ="Login required"'})
+
+    # Recuperation du compte avec le name renseigné dans la base de donnée
+    name = auth.get('name')
+    accounts_cursor.execute(f"SELECT * FROM {accounts_db_name} WHERE name='{name}'")
+    matching_user = accounts_cursor.fetchall()
+
+    # Si pas d'utilisateur trouvé dans la base de donnée
+    if len(matching_user) == 0:
+        return make_response('User does not exist', 401, {'WWW-Authenticate' : 'Basic realm ="User not found"'})
+
+    user = matching_user[0] # Au format tuple (id, id_public, name, hashed_password)
+
+    # Comparaison des hash de mot de passe
+    if check_password_hash(user[3], auth.get('password')):
+        # Supression du compte 
+        accounts_cursor.execute(f"DELETE FROM {accounts_db_name} WHERE name='{user[2]}'")
+        accounts_conn.commit()
+        return jsonify({'message': 'Account deleted'}), 201
+
+
+    return make_response('Wrong password', 403, {'WWW-Authenticate' : 'Basic realm ="Wrong Password"'})
+
+@app.route('/users', methods =['get'])
+def get_users():
+
+        accounts_cursor.execute(f"SELECT * FROM {accounts_db_name}")
+        users = accounts_cursor.fetchall()
+
+        return jsonify(users)
 
   
 
@@ -130,7 +197,6 @@ def get_beverages(username):
     
     # Si pas de parametre dans l'url, renvoi la totalité des boissons
     if len(request.args) == 0:
-        request.args.get('username')
         cursor.execute(f"SELECT * FROM {db_name}")
         beverages = cursor.fetchall()
 
