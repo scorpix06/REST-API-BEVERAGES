@@ -49,17 +49,24 @@ def token_required(f):
         if not token:
             return jsonify({'message' : 'Token is missing'}), 401
   
-
-        data = jwt.decode(token, app.config['SECRET_KEY'])
-        for account in account:
+        try:
+            data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"])
+        except:
+            return jsonify({'message' : 'Invalid token'}), 401
+        
+        user = None
+        for account in accounts:
             if account.get("id") == data['public_id']:
                 user = account
                 user_founded = True
 
-            current_user = user.get("name")
+                current_user = user.get("name")
 
-            return jsonify({'message' : 'Token is invalid !!'}), 401
-        return  f(current_user, *args, **kwargs)
+        if user == None:
+            return jsonify({'message' : 'Invalid token'}), 401
+        else:
+            return  f(current_user, *args, **kwargs)
+
   
     return decorated
 
@@ -99,7 +106,8 @@ def login():
         # generates the JWT Token
         token = jwt.encode({
             'public_id': user.get("id"),
-            'exp' : datetime.utcnow() + timedelta(minutes = 30)
+            'exp' : datetime.utcnow() + timedelta(minutes = 30),
+            'algorithms': ["HS256"]
         }, app.config['SECRET_KEY'])
         print(token)
         print(type(token))
@@ -130,7 +138,7 @@ def signup():
 # Récupérer toute ou partie des boissons
 @app.route('/beverages', methods=['GET'])
 @token_required
-def get_beverages():
+def get_beverages(current_user):
 
     # Si pas de parametre dans l'url, renvoi la totalité des boissons
     if len(request.args) == 0:
