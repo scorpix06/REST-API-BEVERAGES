@@ -187,7 +187,6 @@ def get_users():
         return jsonify(users)
 
   
-
 # Récupérer toute ou partie des boissons
 @app.route('/beverages', methods=['GET'])
 @auth_required
