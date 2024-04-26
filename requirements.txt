@@ -1,0 +1,4 @@
+pyjwt
+pillow
+flask
+flask_sqlalchemy 
