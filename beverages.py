@@ -124,9 +124,7 @@ def signup():
 
     accounts_cursor.execute(f"SELECT * FROM {accounts_db_name} WHERE name='{name}'")
     matching_user = accounts_cursor.fetchall()
-    print(name)
-    print(matching_user)
-    print(len(matching_user))
+
     if len(matching_user) >= 1:
         return jsonify({'message' : 'User already exist'}), 401
     
@@ -204,7 +202,6 @@ def get_beverages(username):
     
     # L'API ne gere qu'un seul argument de recherche a la fois, pour le moment :) 
     elif len(request.args) == 1:
-        print('in my elif')
         arg = list(request.args.keys())[0]
         arg_value = request.args.get(list(request.args.keys())[0])
         argument_valable = ["nom", "type", "description", "alcool", "contenance", "contenance_restante", "pays", "nez", "bouche", "finale", "id"]
@@ -213,6 +210,7 @@ def get_beverages(username):
         if arg in argument_valable:
             cursor.execute(f"SELECT * FROM {db_name} WHERE {arg}='{arg_value}'")
             beverages = cursor.fetchall()
+            print(beverages)
 
             if not beverages or beverages is None:
                 return jsonify({'message': 'Beverage not found'}), 404
