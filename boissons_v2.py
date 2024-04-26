@@ -2,7 +2,6 @@
 
 from flask import Flask, request, jsonify, make_response
 import sqlite3
-from flask_sqlalchemy import SQLAlchemy
 import uuid # for public id
 from  werkzeug.security import generate_password_hash, check_password_hash
 import jwt
@@ -37,53 +36,42 @@ conn.commit()
 accounts = []
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'masuperclesupersecrete'
+app.config['SECRET_KEY'] = 'masuperclesupersecreteestsurgithub,pasbien'
 
 
-def token_required(f):
+# Fonction qui verifie si un token est valide ou non, sera appelé en decorateur pour chaque endpoint de notre API 
+def auth_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
+
+        # Verifie que la requete contient un token dans le header
         token = None
-        if 'x-access-token' in request.headers:
-            token = request.headers['x-access-token']
+        if 'token' in request.headers:
+            token = request.headers['token']
         if not token:
             return jsonify({'message' : 'Token is missing'}), 401
   
+        # Tente de decoder le token
         try:
             data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"])
         except:
             return jsonify({'message' : 'Invalid token'}), 401
         
+        # Grace a l'uuid (obtenu en decodant le token), verifie que l'uuid appartient bien a un user de notre API
         user = None
         for account in accounts:
             if account.get("id") == data['public_id']:
                 user = account
                 user_founded = True
+                username = user.get("name")
 
-                current_user = user.get("name")
-
-        if user == None:
-            return jsonify({'message' : 'Invalid token'}), 401
+        if not user:
+            return jsonify({'message' : 'User not found'}), 401
         else:
-            return  f(current_user, *args, **kwargs)
+            return  f(username, *args, **kwargs)
 
-  
     return decorated
 
-@app.route('/user', methods =['GET'])
-@token_required
-def get_all_users(current_user):
-
-    users = User.query.all()
-    output = []
-    for user in users:
-        output.append({
-            'public_id': user.public_id,
-            'name' : user.name,
-            'email' : user.email
-        })
-  
-    return jsonify({'users': output})
   
 @app.route('/login', methods =['POST'])
 def login():
@@ -137,9 +125,9 @@ def signup():
 
 # Récupérer toute ou partie des boissons
 @app.route('/beverages', methods=['GET'])
-@token_required
-def get_beverages(current_user):
-
+@auth_required
+def get_beverages(username):
+    
     # Si pas de parametre dans l'url, renvoi la totalité des boissons
     if len(request.args) == 0:
         request.args.get('username')
@@ -150,11 +138,12 @@ def get_beverages(current_user):
     
     # L'API ne gere qu'un seul argument de recherche a la fois, pour le moment :) 
     elif len(request.args) == 1:
+        print('in my elif')
         arg = list(request.args.keys())[0]
         arg_value = request.args.get(list(request.args.keys())[0])
         argument_valable = ["nom", "type", "description", "alcool", "contenance", "contenance_restante", "pays", "nez", "bouche", "finale", "id"]
         
-        # On verifie que l'argument rentré fait parti des colonnes de notre base de données
+        # Verifie que l'argument rentré fait parti des colonnes de notre base de données
         if arg in argument_valable:
             cursor.execute(f"SELECT * FROM {db_name} WHERE {arg}='{arg_value}'")
             beverages = cursor.fetchall()
@@ -173,7 +162,8 @@ def get_beverages(current_user):
 # Ajouter une nouvelle boissons
 
 @app.route('/beverages', methods=['POST'])
-def add_beverage():
+@auth_required
+def add_beverage(username):
     cursor.execute(f"""
     INSERT INTO {db_name} (nom, type, description, alcool, contenance, contenance_restante, pays, nez, bouche, finale) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
     """, (request.json['nom'], 
@@ -196,7 +186,8 @@ def add_beverage():
 
 # Mettre a jour une boisson existante
 @app.route('/beverages/<int:id>', methods=['PUT'])
-def update_beverage(id):
+@auth_required
+def update_beverage(username, id):
     cursor.execute(f"""
     UPDATE {db_name} SET nom=?, type=?, description=?, alcool=?, contenance=?, contenance_restante=?, pays=?, nez=?, bouche=?, finale=? WHERE id=?
     """, (request.json['nom'], 
@@ -217,7 +208,8 @@ def update_beverage(id):
 
 # Supprimer une boisson 
 @app.route('/beverages/<int:id>', methods=['DELETE'])
-def delete_beverage(id):
+@auth_required
+def delete_beverage(username, id):
     cursor.execute(f"DELETE FROM {db_name} WHERE id={id}")
     conn.commit()
 
@@ -225,7 +217,8 @@ def delete_beverage(id):
 
 # Supprimer toutes les boissons (effacer la base de donnée)
 @app.route('/beverages/all', methods=['DELETE'])
-def supprimer_chaussures():
+@auth_required
+def supprimer_chaussures(username):
     cursor.execute(f"DELETE FROM {db_name}")
     conn.commit()
 
