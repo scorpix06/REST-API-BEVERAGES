@@ -59,7 +59,7 @@ app.config['SECRET_KEY'] = 'masuperclesupersecreteestsurgithub,pasbien'
 def infos():
     py_version = str(platform.python_version())
     flask_version = str(flask.__version__)
-    api_version = "1.0"
+    api_version = "1.3"
 
     if request.content_type == "application/json":
         return jsonify({
@@ -168,7 +168,7 @@ def signup():
 
 @app.route('/users', methods =['DELETE'])
 @auth_required
-def del_user():
+def del_user(username):
     
     # Verification que le name et le password ont été fournis dans la requete
     auth = request.form
@@ -197,7 +197,7 @@ def del_user():
 
 @app.route('/users', methods =['get'])
 @auth_required
-def get_users():
+def get_users(username):
         accounts_cursor.execute(f"SELECT * FROM {accounts_db_name}")
         users = accounts_cursor.fetchall()
 
@@ -300,7 +300,7 @@ def delete_beverage(username, id):
 # Supprimer toutes les boissons (effacer la base de donnée)
 @app.route('/beverages/all', methods=['DELETE'])
 @auth_required
-def supprimer_chaussures(username):
+def del_all_beverages(username):
     cursor.execute(f"DELETE FROM {db_name}")
     conn.commit()
 
