@@ -6,7 +6,7 @@ This repository is school project on REST API. It use Python Flask to create a R
 ### Quick setup with docker 
 
 ```bash
-  docker run -p 5000:5000 scorpix06/beverages:1.0
+  docker run -p 5000:5000 scorpix06/beverages:latest
 ```
     
 
